@@ -592,12 +592,13 @@ class MonitorClient extends EventEmitter {
                 try {
                     json = e.response.data ? e.response.data : JSON.parse(e.response.body);
                 } catch (jsonException) {
-                    // do nothing
+                    this.log(`Impossible to parse JSON body: ${e.response.body}`);
                 }
                 if (json && json.error) {
                     this.log(`Monitor API Error [code ${json.error.code}]: ${json.error.message}`);
                 }
             }
+            this.log(e);
             throw new Error(`${url} POST ${errorMessages.request_failed} ${e.message}`);
         }
         return result;
@@ -667,6 +668,7 @@ class MonitorClient extends EventEmitter {
                 throw new Error(`${errorMessages.rq_unkonwn_method} ${method}`);
             }
             if (data && data.body) {
+                this.log(data.timings);
                 result = JSON.parse(data.body);
             }
             break;
